@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logoutput-gen-writer-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logoutput-gen-writer
+  template:
+    metadata:
+      labels:
+        app: logoutput-gen-writer
+    spec:
+      volumes:
+        - name: logoutput-gen-writer-volume
+          emptyDir: {}
+      containers:
+        - name: logoutput-generator
+          image: jovankarmakka/logoutput-generator:v0.1
+          volumeMounts:
+            - name: logoutput-gen-writer-volume
+              mountPath: /usr/src/app/files
+        - name: logoutput-writer
+          image: jovankarmakka/logoutput-writer:v0.1
+          volumeMounts:
+            - name: logoutput-gen-writer-volume
+              mountPath: /usr/src/app/files              
