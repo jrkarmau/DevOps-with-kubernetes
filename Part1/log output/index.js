@@ -34,7 +34,7 @@ const getString = () => {
 }
 
 
-app.get('/', (request, response) => {
+app.get('/logoutput', (request, response) => {
   response.send(`
     <div>
       <h1>Log output</h1>

@@ -12,6 +12,14 @@ spec:
       labels:
         app: project
     spec:
+      volumes:
+        - name: project-image
+          persistentVolumeClaim:
+            claimName: pingpong-claim
       containers:
         - name: project
-          image: jovankarmakka/project:v0.4
+          image: jovankarmakka/project:v0.6
+          imagePullPolicy: Always
+          volumeMounts:
+          - name: project-image
+            mountPath: /usr/src/app/files

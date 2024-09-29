@@ -1,15 +1,30 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: project-ingress
+  name: part1-ingress
 spec:
   rules:
   - http:
       paths:
-      - path: /
+      - path: /logoutput
+        pathType: Prefix
+        backend:
+          service:
+            name: logoutput-svc
+            port:
+              number: 2345       
+      - path: /pingpong
+        pathType: Prefix
+        backend:
+          service:
+            name: pingpong-svc
+            port:
+              number: 2346
+      - path: /project
         pathType: Prefix
         backend:
           service:
             name: project-svc
             port:
-              number: 2345
+              number: 2347
+           

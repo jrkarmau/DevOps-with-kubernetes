@@ -19,6 +19,7 @@ spec:
       containers:
         - name: pingpong
           image: jovankarmakka/pingpong:v0.4
+          imagePullPolicy: Always
           volumeMounts:
           - name: pingpong-image
             mountPath: /usr/src/app/files
