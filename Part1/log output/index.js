@@ -1,19 +1,23 @@
 const express = require('express')
+const axios = require('axios');
 const app = express()
 const PORT = process.env.PORT || 3000
-const fs = require('fs')
-const path = require('path')
-const directory = path.join('/', 'usr', 'src', 'app', 'files')
-const filePath = path.join(directory, 'pongs.txt')
+//const fs = require('fs')
+//const path = require('path')
+//const directory = path.join('/', 'usr', 'src', 'app', 'files')
+//const filePath = path.join(directory, 'pongs.txt')
 
 let string = ""
 
-const getPongs = () => {
-  if (!fs.existsSync(filePath)) {
-    return 0
+const getPongs = async () => {
+  try {
+    const response = await axios.get('http://pingpong-svc:2346/pongcount');
+    console.log(response.data.pongs);
+    return response.data.pongs;
+  } catch (error) {
+    console.error('Error fetching pongs:', error);
+    return "0";
   }
-  return parseInt(fs.readFileSync
-    (filePath).toString())
 }
 
 const logString = () => {  
@@ -33,16 +37,20 @@ const getString = () => {
     return str
 }
 
-
-app.get('/logoutput', (request, response) => {
-  response.send(`
-    <div>
-      <h1>Log output</h1>
-      <p>Log output: ${string}</p>
-      <p>Ping / Pongs: ${getPongs()}</p>
-    </div>
-  `)  
-  })
+app.get('/logoutput', async (request, response) => {
+  try {
+    const pongs = await getPongs();
+    response.send(`
+      <div>
+        <h1>Log output</h1>
+        <p>Log output: ${string}</p>
+        <p>Ping / Pongs: ${pongs}</p>
+      </div>
+    `);
+  } catch (error) {
+    response.status(500).send('Error fetching pongs');
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server started in port ${PORT}`)

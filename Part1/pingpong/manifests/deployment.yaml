@@ -18,7 +18,7 @@ spec:
             claimName: pingpong-claim
       containers:
         - name: pingpong
-          image: jovankarmakka/pingpong:v0.4
+          image: jovankarmakka/pingpong:v0.8
           imagePullPolicy: Always
           volumeMounts:
           - name: pingpong-image
