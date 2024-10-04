@@ -20,13 +20,6 @@ spec:
             name: pingpong-svc
             port:
               number: 2346
-      - path: /pongcount
-        pathType: Prefix
-        backend:
-          service:
-            name: pingpong-svc
-            port:
-              number: 2346
       - path: /project
         pathType: Prefix
         backend:
@@ -34,4 +27,18 @@ spec:
             name: project-svc
             port:
               number: 2347
+      - path: /gettodos
+        pathType: Prefix
+        backend:
+          service:
+            name: todo-backend-svc
+            port:
+              number: 2348
+      - path: /todos
+        pathType: Prefix
+        backend:
+          service:
+            name: todo-backend-svc
+            port:
+              number: 2348
            

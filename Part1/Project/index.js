@@ -7,11 +7,15 @@ const path = require('path')
 const directory = path.join('/', 'usr', 'src', 'app', 'files')
 const filePath = path.join(directory, 'pic.txt')
 
-const todos = [
-  { id: 1, text: 'Todo 1' },
-  { id: 2, text: 'Todo 2' },
-  { id: 3, text: 'Todo 3' },
-];
+const getTodos = async () => {
+  try {
+    const response = await axios.get('http://todo-backend-svc:2348/gettodos');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching todos:', error);
+    return {};
+  }
+}
 
 const updatePicture = async () => {
   if (!fs.existsSync(filePath)) {
@@ -20,7 +24,6 @@ const updatePicture = async () => {
   try {
     response = await axios.get('https://picsum.photos/200');
     fs.createWriteStream(filePath).write(Date.now() + ";" + response.request.res.responseUrl.toString())
-    console.log('Picture updated:', response.request.res.responseUrl.toString())
   } catch (error) {
     console.error('Error saving picture:', error);
   }
@@ -38,19 +41,53 @@ const getPic = async () => {
 };
 
 app.get('/project', async (request, response) => {
-  const pictureUrl = await getPic()
+  const pictureUrl = await getPic();
+  const todos = await getTodos();
   response.send(`
-    <h1>Project start page</h1>
-    <img src="${pictureUrl}" alt="Random Picture"/>
-    <h1>Todo List</h1>
-    <form>
-      <input type="text" id="todoInput" maxlength="140" placeholder="Enter your todo" />
-      <button type="button" id="sendButton">Send</button>
-    </form>
-    <ul id="todoList">
-      ${todos.map(todo => `<li>${todo.text}</li>`).join('')}
-    </ul>
-    `);
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Project Start Page</title>
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+      <h1>Project start page</h1>
+      <img src="${pictureUrl}" alt="Random Picture"/>
+      <h1>Todo List</h1>
+      <form id="todoForm">
+        <input type="text" id="todoInput" maxlength="140" placeholder="Enter your todo" />
+        <button type="submit" id="sendButton">Send</button>
+      </form>
+      <ul id="todoList">
+        ${todos.map(todo => `<li>${todo.text}</li>`).join('')}
+      </ul>
+      <script>
+        document.getElementById('todoForm').addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const todoInput = document.getElementById('todoInput');
+          const text = todoInput.value;
+          if (text) {
+            try {
+              const postResponse = await axios.post('http://localhost:8081/todos', { text });
+              if (postResponse.status === 201) {
+                todoInput.value = '';
+                const response = await axios.get('http://localhost:8081/gettodos');
+                const todos = response.data;
+                const todoList = document.getElementById('todoList');
+                todoList.innerHTML = todos.map(todo => '<li>' + todo.text + '</li>').join('');
+              } else {
+                console.error('Error adding todo:', postResponse.statusText);
+              }
+            } catch (error) {
+              console.error('Error adding todo:', error);
+            }
+          }
+        });
+      </script>
+    </body>
+    </html>
+  `);
 });
 
 app.listen(PORT, () => {
