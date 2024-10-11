@@ -33,7 +33,7 @@ const getPic = async () => {
   if (!fs.existsSync(filePath)) {
     await updatePicture()
   }
-  const data = fs.readFileSync(filePath).toString().split(';')
+  const data = await fs.readFileSync(filePath).toString().split(';')
   if (data[0] < Date.now() - 3600000) {
     await updatePicture()
   }
