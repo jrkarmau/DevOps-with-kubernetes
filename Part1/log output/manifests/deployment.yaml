@@ -15,5 +15,8 @@ spec:
     spec:
       containers:
         - name: logoutput
-          image: jovankarmakka/log:v0.7
+          image: jovankarmakka/log:v0.8
           imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: logoutput-conmap

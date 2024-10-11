@@ -2,10 +2,7 @@ const express = require('express')
 const axios = require('axios');
 const app = express()
 const PORT = process.env.PORT || 3000
-//const fs = require('fs')
-//const path = require('path')
-//const directory = path.join('/', 'usr', 'src', 'app', 'files')
-//const filePath = path.join(directory, 'pongs.txt')
+const message = process.env.message;
 
 let string = ""
 
@@ -43,6 +40,7 @@ app.get('/logoutput', async (request, response) => {
     response.send(`
       <div>
         <h1>Log output</h1>
+        <p>Env variable: ${message}</p>
         <p>Log output: ${string}</p>
         <p>Ping / Pongs: ${pongs}</p>
       </div>
