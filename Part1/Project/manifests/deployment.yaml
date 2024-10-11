@@ -24,3 +24,6 @@ spec:
           volumeMounts:
           - name: project-image
             mountPath: /usr/src/app/files
+          envFrom:
+            - secretRef:
+                name: test-apikey
