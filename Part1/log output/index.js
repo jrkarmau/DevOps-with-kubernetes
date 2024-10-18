@@ -2,7 +2,9 @@ const express = require('express')
 const axios = require('axios');
 const app = express()
 const PORT = process.env.PORT || 3000
-const message = process.env.message;
+const message = process.env.MESSAGE;
+const fs = require('fs');
+const filePath = '/app/config/information.txt';
 
 let string = ""
 
@@ -34,13 +36,25 @@ const getString = () => {
     return str
 }
 
+function readConfigFile(filePath) {
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return data;
+  } catch (err) {
+    console.error(`Error reading file from disk: ${err}`);
+    return null;
+  }
+}
+
 app.get('/logoutput', async (request, response) => {
   try {
     const pongs = await getPongs();
+    const fileContent = readConfigFile(filePath);
     response.send(`
       <div>
         <h1>Log output</h1>
-        <p>Env variable: ${message}</p>
+        <p>File content: ${fileContent}</p>
+        <p>Env variable: MESSAGE=${message}</p>
         <p>Log output: ${string}</p>
         <p>Ping / Pongs: ${pongs}</p>
       </div>

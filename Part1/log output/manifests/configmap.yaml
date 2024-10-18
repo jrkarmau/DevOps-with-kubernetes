@@ -5,3 +5,4 @@ metadata:
   name: logoutput-conmap
 data:
   message: "Hello, from configmap!"
+  information.txt: "This text is from file"

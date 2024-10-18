@@ -17,6 +17,20 @@ spec:
         - name: logoutput
           image: jovankarmakka/log:v0.8
           imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: logoutput-conmap
+          env:
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: logoutput-conmap
+                  key: message
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/config/information.txt
+              subPath: information.txt
+      volumes:
+        - name: config-volume
+          configMap:
+            name: logoutput-conmap
+            items:
+              - key: information.txt
+                path: information.txt
