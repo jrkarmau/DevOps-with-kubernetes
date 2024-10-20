@@ -4,7 +4,7 @@ metadata:
   namespace: project
   name: reminder
 spec:
-  schedule: "* * * * *"
+  schedule: "0 * * * *"
   jobTemplate:
     spec:
       template:
