@@ -59,9 +59,9 @@ app.get('/project', async (request, response) => {
         <input type="text" id="todoInput" maxlength="140" placeholder="Enter your todo" />
         <button type="submit" id="sendButton">Send</button>
       </form>
-      <ul id="todoList">
+        <ul id="todoList">
         ${todos.map(todo => `<li>${todo.text}</li>`).join('')}
-      </ul>
+        </ul>
       <script>
         document.getElementById('todoForm').addEventListener('submit', async (event) => {
           event.preventDefault();

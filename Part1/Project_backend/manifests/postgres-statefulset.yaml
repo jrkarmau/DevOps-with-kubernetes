@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: exercises
+  namespace: project
   name: postgres-stset
 spec:
   serviceName: postgres-svc
@@ -22,7 +22,7 @@ spec:
               containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: pingpong
+              value: project
             - name: POSTGRES_USER
               value: jovan
             - name: POSTGRES_PASSWORD
@@ -53,8 +53,8 @@ metadata:
     app: postgres
 spec:
   ports:
-  - port: 5432
-    name: postgres
+    - port: 5432
+      name: postgres
   clusterIP: None
   selector:
     app: postgresapp
