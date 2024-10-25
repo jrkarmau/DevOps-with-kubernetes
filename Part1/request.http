@@ -1,0 +1,6 @@
+POST http://localhost:8081/todos
+Content-Type: application/json
+
+{
+  "text": " excrpurpose of this todo is to ensure that the server correctly responds with an error message for exceeding length."
+}

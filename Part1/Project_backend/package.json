@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^1.7.7",
     "express": "^4.19.2",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "winston": "^3.15.0",
+    "winston-loki": "^6.1.3"
   }
 }

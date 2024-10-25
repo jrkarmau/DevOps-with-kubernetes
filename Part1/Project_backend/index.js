@@ -3,6 +3,8 @@ const { Pool } = require('pg');
 const app = express()
 const PORT = process.env.PORT || 3000
 app.use(express.json())
+const { createLogger, transports, format } = require('winston');
+const LokiTransport = require('winston-loki');
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
@@ -10,6 +12,16 @@ const pool = new Pool({
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
   port: 5432,
+});
+
+const logger = createLogger({
+  format: format.json(),
+  transports: [
+      new LokiTransport({
+          host: 'http://loki.loki-stack:3100',
+          labels: { app: 'todo-backend' },
+      }),
+  ],
 });
 
 app.get('/gettodos', async (request, response) => {
@@ -29,6 +41,11 @@ app.get('/gettodos', async (request, response) => {
 
 app.post('/todos', async (request, response) => {
   const { text } = request.body;
+  if (text.length > 140) {
+    logger.error('Todo text too long', { text: text });
+    response.status(400).json({ error: 'Todo text too long' });
+    return;
+  }
   try {
     const result = await pool.query(
         'INSERT INTO todos (todo_text) VALUES ($1) RETURNING *', [text]
@@ -45,3 +62,8 @@ app.post('/todos', async (request, response) => {
 app.listen(PORT, () => {
   console.log(`Server started in port ${PORT}`)
 })
+
+app.use((req, res, next) => {
+  logger.info('Received request', { method: req.method, url: req.url, body: req.body });
+  next();
+});
