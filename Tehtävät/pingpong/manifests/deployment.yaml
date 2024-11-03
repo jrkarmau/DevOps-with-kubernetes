@@ -13,10 +13,6 @@ spec:
       labels:
         app: pingpong
     spec:
-      volumes:
-        - name: pingpong-image
-          persistentVolumeClaim:
-            claimName: pingpong-claim
       containers:
         - name: pingpong
           image: jovankarmakka/pingpong:v0.9
