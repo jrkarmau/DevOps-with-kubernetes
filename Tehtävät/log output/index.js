@@ -64,6 +64,10 @@ app.get('/logoutput', async (request, response) => {
   }
 });
 
+app.get('/', (request, response) => {
+  response.send('Service is running');
+});
+
 app.listen(PORT, () => {
   console.log(`Server started in port ${PORT}`)
 })

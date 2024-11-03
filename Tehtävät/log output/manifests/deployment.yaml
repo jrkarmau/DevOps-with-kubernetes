@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: logoutput
-          image: jovankarmakka/log:v0.8
+          image: jovankarmakka/log:v0.9
           imagePullPolicy: Always
           env:
             - name: MESSAGE
