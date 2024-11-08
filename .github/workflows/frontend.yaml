@@ -13,7 +13,7 @@ env:
   NAMESPACE: ${{ github.ref_name == 'main' && 'default' || github.ref_name }}
 
 jobs:
-  build-publish-deploy:
+  deploy-frontend:
     name: Build, Publish and Deploy
     runs-on: ubuntu-latest
     environment: project
