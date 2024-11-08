@@ -38,5 +38,5 @@ jobs:
 
       - name: 'Extract Branch Name and Delete Namespace'
         run: |
-          BRANCH_NAME=$(echo "$GITHUB_REF"
+          BRANCH_NAME=$(echo "$GITHUB_REF" | sed 's/refs\/heads\///')
           kubectl delete namespace $BRANCH_NAME || echo "Namespace $BRANCH_NAME does not exist or is already deleted."
