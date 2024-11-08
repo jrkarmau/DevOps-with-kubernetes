@@ -1,4 +1,4 @@
-name: Release fronetend
+name: Release frontend
 
 on:
   push:
@@ -7,8 +7,8 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
-  IMAGE: todo-backend
-  SERVICE: todo-backend-dep
+  IMAGE: project
+  SERVICE: project-dep
   BRANCH: ${{ github.ref_name }}
 
 jobs:
@@ -42,7 +42,7 @@ jobs:
           location: '${{ env.GKE_ZONE }}'
 
       - name: Build
-        run: docker build --file Tehtävät/Project-backend/Dockerfile --tag "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA" Tehtävät/Project_backend
+        run: docker build --file Tehtävät/Project/Dockerfile --tag "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA" Tehtävät/Project
 
       - name: Publish
         run: docker push "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA"
@@ -52,7 +52,7 @@ jobs:
 
       - name: Deploy
         run: |
-          cd Tehtävät/Project-backend
+          cd Tehtävät/Project
           kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize build . | kubectl apply -f -
 
