@@ -50,13 +50,16 @@ jobs:
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v2.1.0
 
+      - name: Print service name
+        run: echo $SERVICE 
+
       - name: Deploy
         run: |
           cd Tehtävät/Project
           kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize build . | kubectl apply -f -
 
-          kubectl rollout status deployment $SERVICE
+          kubectl rollout status deployment $SERVICE -n project
           kubectl get services -o wide
 
 
