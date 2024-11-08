@@ -19,7 +19,7 @@ spec:
             claimName: project-claim
       containers:
         - name: project
-          image: jovankarmakka/project:v0.11
+          image: PROJECT/IMAGE
           imagePullPolicy: Always
           volumeMounts:
           - name: project-image
