@@ -8,7 +8,7 @@ const LokiTransport = require('winston-loki');
 
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
-  host: 'postgres-stset-0.postgres-svc',
+  host: 'postgres-svc',
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
   port: 5432,
@@ -38,6 +38,9 @@ app.get('/gettodos', async (request, response) => {
   }
 });
 
+app.get('/', (request, response) => {
+  response.send('Service is running');
+});
 
 app.post('/todos', async (request, response) => {
   const { text } = request.body;

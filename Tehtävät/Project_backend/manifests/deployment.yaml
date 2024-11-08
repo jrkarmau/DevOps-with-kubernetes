@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: todo-backend
-          image: jovankarmakka/todo-backend:v0.3
+          image: jovankarmakka/todo-backend:v0.4
           imagePullPolicy: Always
           env:
             - name: POSTGRES_USER
@@ -23,7 +23,7 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgress-password
+                  name: postgres-password
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_DB
               value: "project"

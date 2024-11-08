@@ -40,6 +40,10 @@ const getPic = async () => {
   return fs.readFileSync(filePath).toString().split(';')[1]
 };
 
+app.get('/', (request, response) => {
+  response.send('Service is running');
+});
+
 app.get('/project', async (request, response) => {
   const pictureUrl = await getPic();
   const todos = await getTodos();
@@ -69,10 +73,10 @@ app.get('/project', async (request, response) => {
           const text = todoInput.value;
           if (text) {
             try {
-              const postResponse = await axios.post('http://localhost:8081/todos', { text });
+              const postResponse = await axios.post('/todos', { text });
               if (postResponse.status === 201) {
                 todoInput.value = '';
-                const response = await axios.get('http://localhost:8081/gettodos');
+                const response = await axios.get('/gettodos');
                 const todos = response.data;
                 const todoList = document.getElementById('todoList');
                 todoList.innerHTML = todos.map(todo => '<li>' + todo.text + '</li>').join('');
