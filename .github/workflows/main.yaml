@@ -52,7 +52,7 @@ jobs:
 
       - name: Deploy
         run: |
-          kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
+          kustomize edit -k Tehtävät/Project set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize build Tehtävät/Project | kubectl apply -f -
           kubectl rollout status deployment $SERVICE
           kubectl get services -o wide
