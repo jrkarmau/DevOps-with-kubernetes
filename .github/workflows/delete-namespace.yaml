@@ -1,4 +1,4 @@
-name: Delete namespace
+name: Delete Namespace on Branch Deletion
 
 on:
   delete:
@@ -37,7 +37,12 @@ jobs:
           project_id: '${{ env.PROJECT_ID }}'
           location: '${{ env.GKE_ZONE }}'
 
-      - name: Delete Namespace
+      - name: 'Print Event Information'
+        run: |
+          echo "GitHub Ref: $GITHUB_REF"
+          echo "Branch Name: $NAMESPACE"
+      
+      - name: 'Delete Namespace'
         run: |
           echo "Deleting namespace $NAMESPACE"
           kubectl delete namespace $NAMESPACE || echo "Namespace $NAMESPACE does not exist or is already deleted."
