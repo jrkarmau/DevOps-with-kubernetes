@@ -36,14 +36,7 @@ jobs:
           project_id: '${{ env.PROJECT_ID }}'
           location: '${{ env.GKE_ZONE }}'
 
-      - name: 'Print Event Information'
+      - name: 'Extract Branch Name and Delete Namespace'
         run: |
-          echo "GitHub Ref: $GITHUB_REF"
-          BRANCH_NAME=$(echo "$GITHUB_REF" | sed 's/refs\/heads\///')
-          echo "Branch Name: $BRANCH_NAME"
-      
-      - name: 'Delete Namespace'
-        run: |
-          BRANCH_NAME=$(echo "$GITHUB_REF" | sed 's/refs\/heads\///')
-          echo "Deleting namespace $BRANCH_NAME"
+          BRANCH_NAME=$(echo "$GITHUB_REF"
           kubectl delete namespace $BRANCH_NAME || echo "Namespace $BRANCH_NAME does not exist or is already deleted."
