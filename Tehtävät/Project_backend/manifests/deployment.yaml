@@ -13,6 +13,8 @@ spec:
       labels:
         app: todo-backend
     spec:
+      strategy:
+        type: Recreate
       containers:
         - name: todo-backend
           image: PROJECT/IMAGE
