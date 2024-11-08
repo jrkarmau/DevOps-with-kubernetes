@@ -10,6 +10,7 @@ env:
   IMAGE: project
   SERVICE: project-dep
   BRANCH: ${{ github.ref_name }}
+  NAMESPACE: ${{ github.ref_name == 'main' && 'default' || github.ref_name }}
 
 jobs:
   build-publish-deploy:
@@ -53,6 +54,8 @@ jobs:
       - name: Deploy
         run: |
           cd Tehtävät/Project
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
           kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize build . | kubectl apply -f -
 
