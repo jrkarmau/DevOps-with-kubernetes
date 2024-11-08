@@ -5,4 +5,5 @@ resources:
   - manifests/service.yaml
 images:
   - name: PROJECT/IMAGE
-    newName: jovankarmakka/todo-backend:v0.4
+    newName: gcr.io/$PROJECT_ID/$IMAGE
+    newTag: $BRANCH-$GITHUB_SHA
