@@ -9,7 +9,6 @@ env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: dwk-cluster
   GKE_ZONE: europe-north1-b
-  NAMESPACE: ${{ github.ref_name }}
 
 jobs:
   delete-environment:
@@ -40,9 +39,11 @@ jobs:
       - name: 'Print Event Information'
         run: |
           echo "GitHub Ref: $GITHUB_REF"
-          echo "Branch Name: $NAMESPACE"
+          BRANCH_NAME=$(echo "$GITHUB_REF" | sed 's/refs\/heads\///')
+          echo "Branch Name: $BRANCH_NAME"
       
       - name: 'Delete Namespace'
         run: |
-          echo "Deleting namespace $NAMESPACE"
-          kubectl delete namespace $NAMESPACE || echo "Namespace $NAMESPACE does not exist or is already deleted."
+          BRANCH_NAME=$(echo "$GITHUB_REF" | sed 's/refs\/heads\///')
+          echo "Deleting namespace $BRANCH_NAME"
+          kubectl delete namespace $BRANCH_NAME || echo "Namespace $BRANCH_NAME does not exist or is already deleted."
