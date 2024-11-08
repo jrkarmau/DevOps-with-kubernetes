@@ -10,8 +10,9 @@ env:
   IMAGE: todo-backend
   SERVICE: todo-backend-dep
   BRANCH: ${{ github.ref_name }}
+  NAMESPACE: ${{ github.ref_name == 'main' && 'default' || github.ref_name }}
 
-jobs:
+jobs: 
   build-publish-deploy:
     name: Build, Publish and Deploy
     runs-on: ubuntu-latest
@@ -50,28 +51,19 @@ jobs:
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v2.1.0
 
+      - name: Log Branch and Namespace
+        run: |
+          echo "Branch: $BRANCH"
+          echo "Namespace: $NAMESPACE"
+
       - name: Deploy
         run: |
           cd Tehtävät/Project_backend
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
+          kustomize edit set namespace $NAMESPACE
           kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
           kustomize build . | kubectl apply -f -
 
-          kubectl rollout status deployment $SERVICE -n project
+          kubectl rollout status deployment $SERVICE -n $NAMESPACE
           kubectl get services -o wide
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
