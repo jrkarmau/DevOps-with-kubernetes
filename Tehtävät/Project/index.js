@@ -56,7 +56,7 @@ app.get('/project', async (request, response) => {
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>
-      <h1>Project start page</h1>
+      <h1>Project start page!</h1>
       <img src="${pictureUrl}" alt="Random Picture"/>
       <h1>Todo List</h1>
       <form id="todoForm">
