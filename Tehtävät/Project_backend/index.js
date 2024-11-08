@@ -54,7 +54,7 @@ app.post('/todos', async (request, response) => {
         'INSERT INTO todos (todo_text) VALUES ($1) RETURNING *', [text]
     );
     const newTodo = result.rows[0];
-    console.log(`Todo added!: ${newTodo.todo_text}`);
+    console.log(`Todo added!!!: ${newTodo.todo_text}`);
     response.status(201).json(newTodo);
   } catch (error) {
     console.error('Error adding todo:', error);
