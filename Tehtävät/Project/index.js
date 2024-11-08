@@ -52,7 +52,7 @@ app.get('/project', async (request, response) => {
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <title>Project Start Page!</title>
+      <title>Project Start Page</title>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>

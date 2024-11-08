@@ -67,6 +67,6 @@ app.listen(PORT, () => {
 })
 
 app.use((req, res, next) => {
-  logger.info('Received request with test', { method: req.method, url: req.url, body: req.body });
+  logger.info('Received request', { method: req.method, url: req.url, body: req.body });
   next();
 });
