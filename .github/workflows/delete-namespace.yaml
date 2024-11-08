@@ -1,0 +1,43 @@
+name: Delete namespace
+
+on:
+  delete:
+    branches:
+      - '*'
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  NAMESPACE: ${{ github.ref_name }}
+
+jobs:
+  delete-environment:
+    runs-on: ubuntu-latest
+    environment: project
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Verify Google Cloud CLI'
+        run: gcloud info
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: Delete Namespace
+        run: |
+          echo "Deleting namespace $NAMESPACE"
+          kubectl delete namespace $NAMESPACE || echo "Namespace $NAMESPACE does not exist or is already deleted."
