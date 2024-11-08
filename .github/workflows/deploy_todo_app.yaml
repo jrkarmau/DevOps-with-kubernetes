@@ -1,0 +1,122 @@
+name: Deploy todo app
+
+on:
+  push:
+    branches:
+      - main
+      - '*'
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  IMAGE: todo-backend
+  SERVICE: todo-backend-dep
+  BRANCH: ${{ github.ref_name }}
+  NAMESPACE: ${{ github.ref_name == 'main' && 'default' || github.ref_name }}
+
+jobs: 
+  backend-deploy:
+    name: Build, Publish and Deploy
+    runs-on: ubuntu-latest
+    environment: project
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Verify Google Cloud CLI'
+        run: gcloud info
+
+      - name: 'Configure Docker'
+        run: gcloud --quiet auth configure-docker
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: Build
+        run: docker build --file Tehtävät/Project_backend/Dockerfile --tag "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA" Tehtävät/Project_backend
+
+      - name: Publish
+        run: docker push "gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA"
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Log Branch and Namespace
+        run: |
+          echo "Branch: $BRANCH"
+          echo "Namespace: $NAMESPACE"
+
+      - name: Deploy
+        run: |
+          cd Tehtävät/Project_backend
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
+          kustomize edit set namespace $NAMESPACE
+          kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:$BRANCH-$GITHUB_SHA
+          kustomize build . | kubectl apply -f -
+
+          kubectl rollout status deployment $SERVICE -n $NAMESPACE
+          kubectl get services -o wide
+          
+  frontend-deploy:
+    name: Build, Publish and Deploy Frontend
+    runs-on: ubuntu-latest
+    environment: project
+    needs: backend-deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Verify Google Cloud CLI'
+        run: gcloud info
+
+      - name: 'Configure Docker'
+        run: gcloud --quiet auth configure-docker
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: Build Frontend Docker Image
+        run: docker build --file Tehtävät/Project_frontend/Dockerfile --tag "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$BRANCH-$GITHUB_SHA" Tehtävät/Project_frontend
+
+      - name: Publish Frontend Docker Image
+        run: docker push "gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$BRANCH-$GITHUB_SHA"
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Deploy Frontend
+        run: |
+          cd Tehtävät/Project_frontend
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
+          kustomize edit set namespace $NAMESPACE
+          kustomize edit set image PROJECT/IMAGE=gcr.io/$PROJECT_ID/$FRONTEND_IMAGE:$BRANCH-$GITHUB_SHA
+          kustomize build . | kubectl apply -f -
+
+          kubectl rollout status deployment $FRONTEND_SERVICE -n $NAMESPACE
+          kubectl get services -o wide
