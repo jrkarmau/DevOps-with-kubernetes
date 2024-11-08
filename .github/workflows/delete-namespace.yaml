@@ -12,7 +12,6 @@ env:
 
 jobs:
   delete-environment:
-    if: github.event.ref_type == 'branch'
     runs-on: ubuntu-latest
     environment: project
 
@@ -37,6 +36,8 @@ jobs:
           project_id: '${{ env.PROJECT_ID }}'
           location: '${{ env.GKE_ZONE }}'
 
-      - name: 'Delete Namespace'
+      - name: 'Delete the Namespace'
         run: |
-          kubectl delete namespace $(echo "$GITHUB_REF" | sed 's/refs\/heads\///')"
+          BRANCH_NAME=$(echo "$GITHUB_REF" | sed 's/refs\/heads\///')
+          echo "Deleting namespace: $BRANCH_NAME"
+          kubectl delete namespace $BRANCH_NAME || echo "Namespace $BRANCH_NAME does not exist or is already deleted."
